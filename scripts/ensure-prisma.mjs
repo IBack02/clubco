@@ -28,13 +28,20 @@ function clientIsCurrent() {
   }
 }
 
-const defaultDbUrl = "postgresql://postgres:Raushan2009%3D%3FNur@db.frtgaslfumyxjhzzstok.supabase.co:5432/postgres"
+const defaultDbUrl = "postgresql://postgres.frtgaslfumyxjhzzstok:Raushan2009%3D%3FNur@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
 export function ensurePrismaClient() {
   if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("file:")) {
     process.env.DATABASE_URL = defaultDbUrl
-  } else if (process.env.DATABASE_URL.includes("Raushan2009=?Nur")) {
-    process.env.DATABASE_URL = process.env.DATABASE_URL.replace("Raushan2009=?Nur", "Raushan2009%3D%3FNur")
+  } else {
+    if (process.env.DATABASE_URL.includes("Raushan2009=?Nur")) {
+      process.env.DATABASE_URL = process.env.DATABASE_URL.replace("Raushan2009=?Nur", "Raushan2009%3D%3FNur")
+    }
+    if (process.env.DATABASE_URL.includes("db.frtgaslfumyxjhzzstok.supabase.co")) {
+      process.env.DATABASE_URL = process.env.DATABASE_URL
+        .replace("db.frtgaslfumyxjhzzstok.supabase.co", "aws-0-ap-southeast-1.pooler.supabase.com")
+        .replace("postgres:", "postgres.frtgaslfumyxjhzzstok:")
+    }
   }
 
   // Replacing an engine loaded by Next.js or Studio causes EPERM on Windows.
