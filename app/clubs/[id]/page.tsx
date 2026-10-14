@@ -21,14 +21,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, Calendar, ExternalLink, MessageCircle, Megaphone } from "lucide-react"
 import { motion } from "framer-motion"
 
-type ClubWithOwners = Club & { owners?: { id: string; name: string; email: string; grade?: string; phone?: string; bio?: string }[] }
+type ClubWithDetails = Club & {
+  owners?: { id: string; name: string; email: string; grade?: string; phone?: string; bio?: string }[]
+  members?: { id: string; name: string; email: string; role?: string; grade?: string; avatar?: string }[]
+}
 
 export default function ClubPage() {
   const router = useRouter()
   const params = useParams()
   const id = typeof params?.id === "string" ? params.id : ""
   const { user, refreshUser } = useAuth()
-  const [club, setClub] = useState<ClubWithOwners | null>(null)
+  const [club, setClub] = useState<ClubWithDetails | null>(null)
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [loading, setLoading] = useState(true)
@@ -74,6 +77,7 @@ export default function ClubPage() {
   }
 
   const owners = club.owners || []
+  const members = club.members || []
   const isOwner = user && (club.ownerIds.includes(user.id) || user.role === "admin")
   const isMember = user && user.clubMemberships.includes(club.id)
 
@@ -310,9 +314,29 @@ export default function ClubPage() {
                     </div>
                     <span className="text-2xl font-bold text-primary">{club.memberCount}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    Список участников доступен только членам клуба
-                  </p>
+
+                  {members.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">В клубе пока нет участников</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Вступайте в клуб, чтобы стать первым участником!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                      {members.map((member) => (
+                        <div key={member.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-semibold text-primary shrink-0">
+                            {member.name.charAt(0)}
+                          </div>
+                          <div className="truncate">
+                            <p className="font-medium text-sm truncate">{member.name}</p>
+                            {member.grade && <p className="text-xs text-muted-foreground">{member.grade} класс</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

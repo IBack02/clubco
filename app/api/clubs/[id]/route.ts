@@ -8,11 +8,15 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const { id } = await params
     const club = await prisma.club.findUnique({
       where: { id },
-      include: { owners: { include: { user: true } } },
+      include: {
+        owners: { include: { user: true } },
+        members: { include: { user: true } },
+      },
     })
     if (!club) return NextResponse.json({ error: "Клуб не найден" }, { status: 404 })
     const payload = serializeClub(club)
     payload.ownerIds = club.owners.map((o) => o.userId)
+    payload.memberCount = club.members.length
     const owners = club.owners.map((o) => ({
       id: o.user.id,
       name: o.user.name,
@@ -22,7 +26,15 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       phone: o.user.phone,
       bio: o.user.bio,
     }))
-    return NextResponse.json({ ...payload, owners })
+    const members = club.members.map((m) => ({
+      id: m.user.id,
+      name: m.user.name,
+      email: m.user.email,
+      role: m.user.role,
+      grade: m.user.grade,
+      avatar: m.user.avatar,
+    }))
+    return NextResponse.json({ ...payload, owners, members })
   } catch (e) {
     console.error("Club get error:", e)
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 })

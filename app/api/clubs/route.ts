@@ -9,11 +9,15 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category")
     const clubs = await prisma.club.findMany({
       orderBy: { createdAt: "desc" },
-      include: { owners: { select: { userId: true } } },
+      include: {
+        owners: { select: { userId: true } },
+        _count: { select: { members: true } },
+      },
     })
     let list = clubs.map((c) => {
       const club = serializeClub(c)
       club.ownerIds = c.owners.map((o) => o.userId)
+      club.memberCount = c._count.members
       return club
     })
     if (city && city !== "all") list = list.filter((c) => c.city === city)

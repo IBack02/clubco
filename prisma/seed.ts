@@ -92,7 +92,7 @@ async function main() {
       ]),
       links: JSON.stringify({ telegram: "https://t.me/nis_basketball", whatsapp: "https://wa.me/77771234567" }),
       city: "Кызылорда",
-      memberCount: 15,
+      memberCount: 0,
       categories: JSON.stringify(["Спорт", "Баскетбол"]),
     },
   })
@@ -116,7 +116,7 @@ async function main() {
       ]),
       links: JSON.stringify({ telegram: "https://t.me/nis_volleyball", whatsapp: "https://wa.me/77772345678" }),
       city: "Кызылорда",
-      memberCount: 12,
+      memberCount: 0,
       categories: JSON.stringify(["Спорт", "Волейбол"]),
     },
     create: {
@@ -137,7 +137,7 @@ async function main() {
       ]),
       links: JSON.stringify({ telegram: "https://t.me/nis_volleyball", whatsapp: "https://wa.me/77772345678" }),
       city: "Кызылорда",
-      memberCount: 12,
+      memberCount: 0,
       categories: JSON.stringify(["Спорт", "Волейбол"]),
     },
   })
