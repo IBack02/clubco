@@ -28,7 +28,15 @@ function clientIsCurrent() {
   }
 }
 
+const defaultDbUrl = "postgresql://postgres:Raushan2009%3D%3FNur@db.frtgaslfumyxjhzzstok.supabase.co:5432/postgres"
+
 export function ensurePrismaClient() {
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("file:")) {
+    process.env.DATABASE_URL = defaultDbUrl
+  } else if (process.env.DATABASE_URL.includes("Raushan2009=?Nur")) {
+    process.env.DATABASE_URL = process.env.DATABASE_URL.replace("Raushan2009=?Nur", "Raushan2009%3D%3FNur")
+  }
+
   // Replacing an engine loaded by Next.js or Studio causes EPERM on Windows.
   if (clientIsCurrent()) {
     console.log("Prisma Client is up to date; generation skipped.")
