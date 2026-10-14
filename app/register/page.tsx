@@ -114,6 +114,15 @@ export default function RegisterPage() {
                 {isLoading ? "Регистрация..." : "Зарегистрироваться"}
               </Button>
             </form>
+
+            <div className="mt-4 text-center">
+              <p className="text-xs text-muted-foreground">
+                Уже есть аккаунт?{" "}
+                <a href="/login" className="underline font-medium text-foreground">
+                  Войти
+                </a>
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

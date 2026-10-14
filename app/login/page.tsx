@@ -81,11 +81,10 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm font-medium mb-2">Тестовые аккаунты:</p>
+              <p className="text-sm font-medium mb-2">Аккаунты для входа:</p>
               <div className="space-y-1 text-xs text-muted-foreground">
                 <p>Админ: aidar@nis.edu.kz</p>
-                <p>Владелец: alina@nis.edu.kz</p>
-                <p>Ученик: daniyar@nis.edu.kz</p>
+                <p>Владелец: raushan@nis.edu.kz</p>
                 <p className="mt-2 italic">Пароль: password</p>
               </div>
               <p className="text-xs mt-4">
