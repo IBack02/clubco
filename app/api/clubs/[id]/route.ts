@@ -44,14 +44,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Нет прав" }, { status: 403 })
     }
     const body = (await request.json()) as {
+      name?: string
+      shortDescription?: string
       description?: string
+      coverImage?: string
+      city?: string
+      categories?: string[]
       schedule?: { day: string; time: string; room: string }[]
       links?: { telegram?: string; whatsapp?: string; website?: string }
     }
     const update: Record<string, unknown> = {}
+    if (body.name != null) update.name = body.name
+    if (body.shortDescription != null) update.shortDescription = body.shortDescription
     if (body.description != null) update.description = body.description
+    if (body.coverImage != null) update.coverImage = body.coverImage
+    if (body.city != null) update.city = body.city
+    if (body.categories != null) update.categories = JSON.stringify(body.categories)
     if (body.schedule != null) update.schedule = JSON.stringify(body.schedule)
     if (body.links != null) update.links = JSON.stringify(body.links)
+
     const updated = await prisma.club.update({
       where: { id },
       data: update,
@@ -63,5 +74,29 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   } catch (e) {
     console.error("Club update error:", e)
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 })
+  }
+}
+
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: "Необходима авторизация" }, { status: 401 })
+  try {
+    const { id } = await params
+    const club = await prisma.club.findUnique({
+      where: { id },
+      include: { owners: { select: { userId: true } } },
+    })
+    if (!club) return NextResponse.json({ error: "Клуб не найден" }, { status: 404 })
+    const isOwner = club.owners.some((o) => o.userId === session.userId)
+    if (!isOwner && session.role !== "admin") {
+      return NextResponse.json({ error: "Нет прав для удаления" }, { status: 403 })
+    }
+    await prisma.club.delete({
+      where: { id },
+    })
+    return NextResponse.json({ success: true, message: "Клуб успешно удален" })
+  } catch (e) {
+    console.error("Club delete error:", e)
+    return NextResponse.json({ error: "Ошибка сервера при удалении" }, { status: 500 })
   }
 }

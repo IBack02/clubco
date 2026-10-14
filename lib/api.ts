@@ -44,10 +44,26 @@ export const api = {
       fetchJson<import("./types").Club & { owners?: { id: string; name: string; email: string; grade?: string; phone?: string; bio?: string }[] }>(
         "/api/clubs/" + encodeURIComponent(id)
       ),
-    update: (id: string, data: { description?: string; schedule?: { day: string; time: string; room: string }[]; links?: { telegram?: string; whatsapp?: string; website?: string } }) =>
+    update: (
+      id: string,
+      data: {
+        name?: string
+        shortDescription?: string
+        description?: string
+        coverImage?: string
+        city?: string
+        categories?: string[]
+        schedule?: { day: string; time: string; room: string }[]
+        links?: { telegram?: string; whatsapp?: string; website?: string }
+      }
+    ) =>
       fetchJson<import("./types").Club>("/api/clubs/" + encodeURIComponent(id), {
         method: "PUT",
         body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      fetchJson<{ success: boolean; message: string }>("/api/clubs/" + encodeURIComponent(id), {
+        method: "DELETE",
       }),
     announcements: (clubId: string) =>
       fetchJson<import("./types").Announcement[]>("/api/clubs/" + encodeURIComponent(clubId) + "/announcements"),

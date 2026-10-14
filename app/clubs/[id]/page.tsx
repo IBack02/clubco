@@ -1,7 +1,6 @@
 "use client"
 
-import { notFound } from "next/navigation"
-import { useParams } from "next/navigation"
+import { notFound, useParams, useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { api } from "@/lib/api"
 import type { Club, Announcement, Achievement } from "@/lib/types"
@@ -9,6 +8,8 @@ import { useState, useEffect } from "react"
 import { PhotoCarousel } from "@/components/photo-carousel"
 import { ScheduleTable } from "@/components/schedule-table"
 import { JoinClubDialog } from "@/components/join-club-dialog"
+import { EditClubDialog } from "@/components/edit-club-dialog"
+import { DeleteClubDialog } from "@/components/delete-club-dialog"
 import { AnnouncementCard } from "@/components/announcement-card"
 import { AchievementCard } from "@/components/achievement-card"
 import { CreateAnnouncementDialog } from "@/components/create-announcement-dialog"
@@ -23,6 +24,7 @@ import { motion } from "framer-motion"
 type ClubWithOwners = Club & { owners?: { id: string; name: string; email: string; grade?: string; phone?: string; bio?: string }[] }
 
 export default function ClubPage() {
+  const router = useRouter()
   const params = useParams()
   const id = typeof params?.id === "string" ? params.id : ""
   const { user, refreshUser } = useAuth()
@@ -72,7 +74,7 @@ export default function ClubPage() {
   }
 
   const owners = club.owners || []
-  const isOwner = user && club.ownerIds.includes(user.id)
+  const isOwner = user && (club.ownerIds.includes(user.id) || user.role === "admin")
   const isMember = user && user.clubMemberships.includes(club.id)
 
   return (
@@ -84,13 +86,26 @@ export default function ClubPage() {
         className="max-w-5xl mx-auto space-y-8"
       >
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            {club.categories.map((category) => (
-              <Badge key={category} variant="secondary" className="bg-gradient-to-r from-indigo-100 to-purple-100">
-                {category}
-              </Badge>
-            ))}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              {club.categories.map((category) => (
+                <Badge key={category} variant="secondary" className="bg-gradient-to-r from-indigo-100 to-purple-100">
+                  {category}
+                </Badge>
+              ))}
+            </div>
+
+            {isOwner && (
+              <div className="flex items-center gap-2">
+                <EditClubDialog club={club} onSuccess={refreshData} />
+                <DeleteClubDialog
+                  club={club}
+                  onSuccess={() => router.push(user?.role === "admin" ? "/admin" : "/clubs")}
+                />
+              </div>
+            )}
           </div>
+
           <h1 className="text-4xl font-bold mb-4 text-balance bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 bg-clip-text text-transparent">
             {club.name}
           </h1>

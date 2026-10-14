@@ -12,6 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ViewRequestDialog } from "@/components/view-request-dialog"
 import { ApproveRequestDialog } from "@/components/approve-request-dialog"
 import { RejectRequestDialog } from "@/components/reject-request-dialog"
+import { EditClubDialog } from "@/components/edit-club-dialog"
+import { DeleteClubDialog } from "@/components/delete-club-dialog"
 import { api } from "@/lib/api"
 import type { ClubRequest, Club } from "@/lib/types"
 import { Eye, CheckCircle, XCircle, ExternalLink, Trash2, Users } from "lucide-react"
@@ -216,6 +218,8 @@ export default function AdminPage() {
                             Открыть
                           </Button>
                         </Link>
+                        <EditClubDialog club={club} onSuccess={refreshData} />
+                        <DeleteClubDialog club={club} onSuccess={refreshData} />
                       </div>
                     </div>
                   ))}
